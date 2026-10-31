@@ -38,14 +38,14 @@ def test_money_rejects_more_than_two_fraction_digits(amount: str) -> None:
     with pytest.raises(TooManyFractionDigitsError) as exc_info:
         Money(Decimal(amount), Currency.RUB)
 
-    assert exc_info.value.max_fraction_digits == 2
+    assert exc_info.value._max_fraction_digits == 2
 
 
 def test_money_error_describes_invalid_amount() -> None:
     with pytest.raises(NonPositiveAmountError) as exc_info:
         Money(Decimal("-5"), Currency.USD)
 
-    assert exc_info.value.amount == Decimal("-5")
+    assert exc_info.value._amount == Decimal("-5")
     assert "greater than zero" in exc_info.value.message
     assert "-5" in exc_info.value.message
 
