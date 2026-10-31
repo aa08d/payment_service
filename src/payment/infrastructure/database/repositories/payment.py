@@ -8,7 +8,7 @@ from payment.application.payment.exceptions import IdempotencyKeyAlreadyExistErr
 from payment.domain.payment.entities import Payment
 from payment.domain.payment.repositories import PaymentRepository
 from payment.domain.payment.value_objects import IdempotencyKey, PaymentID
-from payment.infrastucture.models import PAYMENT_TABLE
+from payment.infrastructure.database.models import PAYMENT_TABLE
 
 from .base import SQLAlchemyRepository
 
