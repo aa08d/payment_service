@@ -11,7 +11,7 @@ class WebhookURLError(DomainError):
     pass
 
 
-class InvalidWebhookURL(WebhookURLError):
+class InvalidWebhookURLError(WebhookURLError):
     def __init__(self, url: str) -> None:
         self.url = url
 
