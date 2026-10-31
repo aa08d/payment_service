@@ -1,0 +1,38 @@
+[importlinter]
+root_package = payment
+include_external_packages = True
+
+[importlinter:contract:layers]
+name = Layers: dependencies point only downwards
+type = layers
+layers =
+    payment.bootstrap
+    payment.application
+    payment.domain
+
+[importlinter:contract:domain-is-pure]
+name = Domain knows nothing about frameworks
+type = forbidden
+source_modules =
+    payment.domain
+forbidden_modules =
+    sqlalchemy
+    fastapi
+    faststream
+    pydantic
+    httpx
+    dishka
+    alembic
+
+[importlinter:contract:application-is-pure]
+name = Application knows nothing about frameworks
+type = forbidden
+source_modules =
+    payment.application
+forbidden_modules =
+    sqlalchemy
+    fastapi
+    faststream
+    httpx
+    dishka
+    alembic

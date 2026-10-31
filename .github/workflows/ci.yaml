@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  # Fail instead of silently re-resolving dependencies when uv.lock is out of date
+  UV_LOCKED: "1"
+
+jobs:
+  lint:
+    name: Lint, types, architecture
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync
+      - name: Ruff (lint and format)
+        run: make lint
+      - name: Mypy
+        if: ${{ !cancelled() }}
+        run: make typecheck
+      - name: Import linter (layers)
+        if: ${{ !cancelled() }}
+        run: make arch
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync
+      - name: Pytest
+        run: make test

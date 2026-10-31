@@ -1,0 +1,14 @@
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.ruff_cache/
+.pytest_cache/
+.venv
+.env
+config/config.toml
+config/prod_config.toml
+.mypy_cache/
+.import_linter_cache/

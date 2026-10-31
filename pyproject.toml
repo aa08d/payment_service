@@ -1,0 +1,29 @@
+[project]
+name = "payment"
+version = "0.1.0"
+description = "Service skeleton: domain/application common code, mediator, DI"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "dishka>=1.10.1",
+]
+
+[dependency-groups]
+dev = [
+    "import-linter>=2.15",
+    "mypy>=2.4.1",
+    "pre-commit>=4.0.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.25.0",
+    "ruff>=0.9.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
