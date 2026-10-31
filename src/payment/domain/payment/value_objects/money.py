@@ -14,24 +14,30 @@ class MoneyError(DomainError):
 
 class NonFiniteAmountError(MoneyError):
     def __init__(self, amount: Decimal) -> None:
-        self.amount = amount
-        super().__init__(f"Amount must be a finite number, got {amount}.")
+        self._amount = amount
+
+    @property
+    def message(self) -> str:
+        return f"Amount must be a finite number, got {self._amount}."
 
 
 class NonPositiveAmountError(MoneyError):
     def __init__(self, amount: Decimal) -> None:
-        self.amount = amount
-        super().__init__(f"Amount must be greater than zero, got {amount}.")
+        self._amount = amount
+
+    @property
+    def message(self) -> str:
+        return f"Amount must be greater than zero, got {self._amount}."
 
 
 class TooManyFractionDigitsError(MoneyError):
     def __init__(self, amount: Decimal, max_fraction_digits: int) -> None:
-        self.amount = amount
-        self.max_fraction_digits = max_fraction_digits
-        super().__init__(
-            f"Amount must have at most {max_fraction_digits} decimal places, "
-            f"got {amount}."
-        )
+        self._amount = amount
+        self._max_fraction_digits = max_fraction_digits
+
+    @property
+    def message(self) -> str:
+        return f"Amount must have at most {self._max_fraction_digits} decimal places,, got {self._amount}."
 
 
 class Currency(StrEnum):

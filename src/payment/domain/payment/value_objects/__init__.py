@@ -7,12 +7,12 @@ from .payment_timestamps import PaymentTimestamps
 from .webhook_url import WebhookURL
 
 __all__ = (
-    'PaymentID',
-    'Money',
-    'Currency',
-    'Description',
-    'PaymentStatus',
-    'IdempotencyKey',
-    'WebhookURL',
-    'PaymentTimestamps',
+    "Currency",
+    "Description",
+    "IdempotencyKey",
+    "Money",
+    "PaymentID",
+    "PaymentStatus",
+    "PaymentTimestamps",
+    "WebhookURL",
 )

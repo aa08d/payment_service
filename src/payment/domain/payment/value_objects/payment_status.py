@@ -7,20 +7,20 @@ class PaymentStatusError(DomainError):
     pass
 
 
-class InvalidStatusTransition(PaymentStatusError):
+class InvalidStatusTransitionError(PaymentStatusError):
     def __init__(self, current: str, target: str) -> None:
         self._current = current
         self._target = target
 
     @property
     def message(self) -> str:
-        return f'Invalid payment status transition: {self._current} -> {self._target}'
+        return f"Invalid payment status transition: {self._current} -> {self._target}"
 
 
 class PaymentStatus(StrEnum):
-    pending = 'pending'
-    succeeded = 'succeeded'
-    failed = 'failed'
+    pending = "pending"
+    succeeded = "succeeded"
+    failed = "failed"
 
     @classmethod
     def create(cls) -> PaymentStatus:
@@ -42,6 +42,6 @@ class PaymentStatus(StrEnum):
 
     def _to(self, status: PaymentStatus) -> PaymentStatus:
         if self is not PaymentStatus.pending:
-            raise InvalidStatusTransition(self.value, status.value)
+            raise InvalidStatusTransitionError(self.value, status.value)
 
         return status

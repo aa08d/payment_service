@@ -26,17 +26,14 @@ class WebhookURL(ValueObject):
 
     def __post_init__(self) -> None:
         if not self.value or any(char.isspace() for char in self.value):
-            raise InvalidWebhookURL(self.value)
+            raise InvalidWebhookURLError(self.value)
 
         parts = urlsplit(self.value)
 
         if parts.scheme not in ALLOWED_SCHEMES or not parts.hostname:
-            raise InvalidWebhookURL(self.value)
+            raise InvalidWebhookURLError(self.value)
 
         _, separator, raw_port = parts.netloc.rpartition(":")
 
-        if separator and (
-            not raw_port.isdigit()
-            or not 1 <= int(raw_port) <= 65_535
-        ):
-            raise InvalidWebhookURL(self.value)
+        if separator and (not raw_port.isdigit() or not 1 <= int(raw_port) <= 65_535):
+            raise InvalidWebhookURLError(self.value)

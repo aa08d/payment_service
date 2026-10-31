@@ -24,7 +24,6 @@ class PaymentTimestamps(ValueObject):
     created_at: datetime
     processed_at: datetime | None
 
-
     @classmethod
     def create(cls) -> Self:
         now = datetime.now(UTC)
