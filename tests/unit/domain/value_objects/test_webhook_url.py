@@ -4,7 +4,7 @@ import pytest
 
 from payment.domain.common.exceptions import DomainError
 from payment.domain.payment.value_objects import WebhookURL
-from payment.domain.payment.value_objects.webhook_url import InvalidWebhookURL, WebhookURLError
+from payment.domain.payment.value_objects.webhook_url import InvalidWebhookURLError, WebhookURLError
 
 
 @pytest.mark.parametrize(
@@ -46,7 +46,7 @@ def test_webhook_url_accepts_http_and_https_urls(url: str) -> None:
     ],
 )
 def test_webhook_url_rejects_not_http_urls_without_host_or_with_whitespace(url: str) -> None:
-    with pytest.raises(InvalidWebhookURL):
+    with pytest.raises(InvalidWebhookURLError):
         WebhookURL(url)
 
 
@@ -61,12 +61,12 @@ def test_webhook_url_rejects_not_http_urls_without_host_or_with_whitespace(url: 
     ],
 )
 def test_webhook_url_rejects_invalid_port(url: str) -> None:
-    with pytest.raises(InvalidWebhookURL):
+    with pytest.raises(InvalidWebhookURLError):
         WebhookURL(url)
 
 
 def test_webhook_url_error_contains_rejected_url() -> None:
-    with pytest.raises(InvalidWebhookURL) as exc_info:
+    with pytest.raises(InvalidWebhookURLError) as exc_info:
         WebhookURL("ftp://example.com")
 
     assert exc_info.value.url == "ftp://example.com"

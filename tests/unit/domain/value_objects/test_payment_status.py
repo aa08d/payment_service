@@ -2,7 +2,7 @@ import pytest
 
 from payment.domain.common.exceptions import DomainError
 from payment.domain.payment.value_objects import PaymentStatus
-from payment.domain.payment.value_objects.payment_status import InvalidStatusTransition, PaymentStatusError
+from payment.domain.payment.value_objects.payment_status import InvalidStatusTransitionError, PaymentStatusError
 
 
 def test_payment_status_has_only_supported_values() -> None:
@@ -28,7 +28,7 @@ def test_pending_status_can_fail() -> None:
 
 @pytest.mark.parametrize("status", [PaymentStatus.succeeded, PaymentStatus.failed])
 def test_processed_status_cannot_succeed(status: PaymentStatus) -> None:
-    with pytest.raises(InvalidStatusTransition) as exc_info:
+    with pytest.raises(InvalidStatusTransitionError) as exc_info:
         status.succeed()
 
     assert exc_info.value.message == f"Invalid payment status transition: {status.value} -> succeeded"
@@ -36,15 +36,15 @@ def test_processed_status_cannot_succeed(status: PaymentStatus) -> None:
 
 @pytest.mark.parametrize("status", [PaymentStatus.succeeded, PaymentStatus.failed])
 def test_processed_status_cannot_fail(status: PaymentStatus) -> None:
-    with pytest.raises(InvalidStatusTransition) as exc_info:
+    with pytest.raises(InvalidStatusTransitionError) as exc_info:
         status.fail()
 
     assert exc_info.value.message == f"Invalid payment status transition: {status.value} -> failed"
 
 
 def test_invalid_status_transition_is_domain_error() -> None:
-    assert issubclass(InvalidStatusTransition, PaymentStatusError)
-    assert issubclass(InvalidStatusTransition, DomainError)
+    assert issubclass(InvalidStatusTransitionError, PaymentStatusError)
+    assert issubclass(InvalidStatusTransitionError, DomainError)
 
 
 @pytest.mark.parametrize(
