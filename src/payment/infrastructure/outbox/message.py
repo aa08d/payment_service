@@ -8,6 +8,6 @@ from uuid import UUID
 class OutboxMessage:
     id: UUID
     event_type: str
-    routing_key: str | None
+    routing_key: str
     payload: dict[str, Any]
     created_at: datetime
