@@ -6,7 +6,7 @@ import pytest
 from alembic.config import Config as AlembicConfig
 from sqlalchemy import URL, Connection, text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
-from testcontainers.postgres import PostgresContainer
+from testcontainers.community.postgres import PostgresContainer
 
 
 class PostgresDbManager:
