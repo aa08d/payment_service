@@ -17,7 +17,7 @@ services:
     volumes:
       - ./config:/app/config:ro
     environment:
-      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/config.toml}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 5s
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./config:/app/config:ro
     environment:
-      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/config.toml}
 
   relay:
     container_name: payment.relay
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./config:/app/config:ro
     environment:
-      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/config.toml}
 
   migrate:
     container_name: payment.migrate
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./config:/app/config:ro
     environment:
-      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/config.toml}
 
   postgres:
     container_name: payment.postgres
