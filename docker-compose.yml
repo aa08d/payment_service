@@ -1,0 +1,141 @@
+services:
+  api:
+    container_name: payment.api
+    image: payment
+    build:
+      context: .
+    restart: unless-stopped
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - payment.postgres.network
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  consumer:
+    container_name: payment.consumer
+    image: payment
+    build:
+      context: .
+    restart: unless-stopped
+    command: ["python", "-m", "payment.bootstrap.entrypoints.consumer"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - payment.postgres.network
+      - payment.rabbitmq.network
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+
+  relay:
+    container_name: payment.relay
+    image: payment
+    build:
+      context: .
+    restart: unless-stopped
+    command: ["python", "-m", "payment.bootstrap.entrypoints.relay"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - payment.postgres.network
+      - payment.rabbitmq.network
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+
+  migrate:
+    container_name: payment.migrate
+    image: payment
+    build:
+      context: .
+    restart: "no"
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - payment.postgres.network
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - CONFIG_PATH=${CONFIG_PATH:-/app/config/prod_config.toml}
+
+  postgres:
+    container_name: payment.postgres
+    image: postgres:17-alpine
+    hostname: payment.postgres
+    restart: unless-stopped
+    expose:
+      - "5432"
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - payment.postgres.network
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payment}
+      POSTGRES_USER: ${POSTGRES_USER:-payment}
+      POSTGRES_DB: ${POSTGRES_DB:-payment}
+    volumes:
+      - payment.postgres.data:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  rabbitmq:
+    container_name: payment.rabbitmq
+    image: rabbitmq:4-management-alpine
+    hostname: payment.rabbitmq
+    restart: unless-stopped
+    expose:
+      - "5672"
+      - "15672"
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    networks:
+      - payment.rabbitmq.network
+    volumes:
+      - payment.rabbitmq.data:/var/lib/rabbitmq:rw
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  payment.postgres.data:
+    name: payment.postgres.data
+  payment.rabbitmq.data:
+    name: payment.rabbitmq.data
+
+networks:
+  payment.postgres.network:
+    name: payment.postgres.network
+  payment.rabbitmq.network:
+    name: payment.rabbitmq.network
