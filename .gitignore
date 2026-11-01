@@ -9,6 +9,7 @@ wheels/
 .venv
 .env
 config/config.toml
+config/prod_config.toml
 .mypy_cache/
 .import_linter_cache/
 .idea
