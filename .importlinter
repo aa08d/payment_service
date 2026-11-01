@@ -7,6 +7,8 @@ name = Layers: dependencies point only downwards
 type = layers
 layers =
     payment.bootstrap
+    payment.presentation
+    payment.infrastructure
     payment.application
     payment.domain
 
