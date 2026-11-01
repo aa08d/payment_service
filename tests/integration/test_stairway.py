@@ -17,10 +17,8 @@ from tests.fixtures.db import get_alembic_config
 
 
 def get_revisions(alembic_config: AlembicConfig) -> list[Script]:
-    # Get directory object with Alembic migrations
     revisions_dir = ScriptDirectory.from_config(alembic_config)
 
-    # Get & sort migrations, from first to last
     revisions: list[Script] = list(revisions_dir.walk_revisions("base", "heads"))
     revisions.reverse()
     return revisions
@@ -32,7 +30,6 @@ def run_revisions(connection: Connection) -> None:
     for revision in get_revisions(alembic_config):
         upgrade(alembic_config, revision.revision)
 
-        # We need -1 for downgrading first migration (its down_revision is None)
         downgrade(alembic_config, revision.down_revision or "-1")
         upgrade(alembic_config, revision.revision)
 

@@ -15,7 +15,6 @@ class PostgresDbManager:
 
     async def create_database(self, database: str, template: str = "template1") -> None:
         async with self._engine.connect() as connection:
-            # "template1" is the default template name for the `CREATE DATABASE` statement
             await connection.execute(text(f'CREATE DATABASE "{database}" ENCODING \'utf8\' TEMPLATE "{template}"'))
 
     async def drop_database(self, database: str) -> None:
@@ -44,8 +43,6 @@ async def template_db_engine(postgres: PostgresContainer) -> AsyncGenerator[Asyn
     engine = create_async_engine(postgres.get_connection_url())
     async with engine.begin() as connection:
         await connection.run_sync(run_migrations)
-
-    # Connections have to be disposed to allow to use the database as a template
     await engine.dispose()
     yield engine
     await engine.dispose()
