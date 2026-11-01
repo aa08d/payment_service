@@ -30,7 +30,7 @@ class CreatePaymentRequest(BaseModel):
 
 class CreatePaymentResponse(BaseModel):
     payment_id: UUID
-    status: PaymentStatus
+    status: str
     created_at: datetime
 
 
