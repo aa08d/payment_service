@@ -1,7 +1,7 @@
 # Payment Service
 
 Asynchronous payment processing service: accepts a payment request, runs it through a payment gateway (emulated)
-and notifies the client of the result via webhook. Idempotent requests, transactional outbox, retry and DLQ.
+and notifies the client of the result via webhook. Idempotent requests, transactional outbox, retry and DLQ
 
 ---
 
